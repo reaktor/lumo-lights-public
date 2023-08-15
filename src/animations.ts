@@ -11,29 +11,29 @@ const Utils = { changeHue, interpolateChannels, interpolateColor };
 
 const CHANNEL_COUNT = 30;
 
-let gradientStart: RgbColor = [0, 115, 0];
+let gradientStart: RgbColor = [0, 50, 0];
 let gradientStop: RgbColor = [0, 255, 0];
 
-export const rainbow = () =>
-  new Array(360).fill(0).map((_, frame) => {
-    const base = [
-      ...Utils.interpolateColor(gradientStart, gradientStop, 8),
-      ...Utils.interpolateColor(gradientStop, gradientStart, 8).slice(1),
-    ];
+export const rainbow = () => {
+  const base = [
+    ...Utils.interpolateColor(gradientStart, gradientStop, CHANNEL_COUNT / 2),
+    ...Utils.interpolateColor(gradientStop, gradientStart, CHANNEL_COUNT / 2),
+  ];
 
-    // 15 rotation steps with 8 interpolation steps each
-    const interpolationSteps = 8;
-    const step = Math.floor(frame / interpolationSteps) % CHANNEL_COUNT;
-    const nextStep = (step + 1) % CHANNEL_COUNT;
+  const keyframes = Array(CHANNEL_COUNT)
+    .fill(0)
+    .map((_, i) => [...base.slice(i), ...base.slice(0, i)]);
 
-    const interpolated = Utils.interpolateChannels(
-      [...base.slice(step), ...base.slice(0, step)],
-      [...base.slice(nextStep), ...base.slice(0, nextStep)],
-      interpolationSteps
-    )[frame % interpolationSteps];
+  const interpolated = keyframes.flatMap((_, i) =>
+    i < keyframes.length - 1
+      ? interpolateChannels(keyframes[i], keyframes[i + 1], 12)
+      : interpolateChannels(keyframes[i], keyframes[0], 12)
+  );
 
-    return interpolated.map((c) => Utils.changeHue(c, frame % 360));
-  });
+  return interpolated.map((frame, i) =>
+    frame.map((color) => Utils.changeHue(color, i % 360))
+  );
+};
 
 export const knightRider = () => {
   const base: RgbColor[] = new Array(CHANNEL_COUNT)
