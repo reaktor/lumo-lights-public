@@ -1,0 +1,50 @@
+{
+  "name": "lumo-lights",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "dtls-server": "concurrently -p \"[{name}]\" -n \"tsc,express\" -c \"green,yellow\" \"tsc --watch -p tsconfig.dtls.json\" \"nodemon --signal SIGINT -q dist/dtls-server.js\""
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.5.1",
+    "@types/express": "^4.17.17",
+    "@types/ip6addr": "^0.2.3",
+    "concurrently": "^8.2.0",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "ip6addr": "^0.2.5",
+    "lodash": "^4.17.21",
+    "monaco-editor": "^0.40.0",
+    "next": "13.4.4",
+    "node-dtls-client": "^1.1.1",
+    "node-hue-api": "^5.0.0-beta.16",
+    "nodemon": "^2.0.22",
+    "react": "18.2.0",
+    "react-colorful": "^5.6.1",
+    "react-dom": "18.2.0",
+    "react-use-websocket": "^4.3.1",
+    "ts-cie1931-rgb": "^1.0.3",
+    "uuid": "^9.0.0",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
+    "@types/lodash": "^4.14.195",
+    "@types/node": "20.2.5",
+    "@types/react": "18.2.8",
+    "@types/react-dom": "18.2.4",
+    "@types/uuid": "^9.0.2",
+    "@types/ws": "^8.5.5",
+    "autoprefixer": "10.4.14",
+    "daisyui": "^3.0.3",
+    "eslint": "8.42.0",
+    "eslint-config-next": "13.4.4",
+    "postcss": "8.4.24",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.1.3"
+  }
+}
