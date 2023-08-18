@@ -4,7 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import * as _ from "lodash";
 import { rainbow, knightRider, randomLights } from "@/animations";
 import type { RgbColor } from "@/utils/color-utils";
+import { rgbToHSL } from "@/utils/color-utils";
 import Editor from "@monaco-editor/react";
+import Image from "next/image";
 
 const Square = () => (
   <div style={{ border: "1px solid grey", height: "2vw", width: "2vw" }} />
@@ -14,32 +16,29 @@ const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
   <div
     style={{
       display: "flex",
-      flexDirection: "column",
-      gap: "0.5vw",
+      border: "1px solid grey",
+      // background: "yellow",
+      height: "1.25vw",
+      alignItems: "end",
     }}
   >
-    <div
-      style={{
-        display: "flex",
-        border: "1px solid grey",
-        background: "#222",
-        height: "2vw",
-        alignItems: "end",
-      }}
-    >
-      {channels.map(([r, g, b], i) => (
-        <div
-          key={i}
-          style={{
-            height: "0.5vw",
-            width: "1.5vw",
-            boxShadow: `0px -20px 40px 20px rgb(${r}, ${g}, ${b})`,
-            backgroundColor: `rgb(${r}, ${g}, ${b})`,
-          }}
-        />
-      ))}
-    </div>
-    <div style={{ display: "flex", gap: "0.5vw" }}>
+    {channels.map(([r, g, b], i) => (
+      <div
+        key={i}
+        style={{
+          height: "0.2vw",
+          width: "0.8vw",
+          // todo: calculate color brightness and set it as opacity
+          boxShadow: `0px -20px 40px 20px rgba(${r}, ${g}, ${b}, ${
+            1 //rgbToHSL([r, g, b]).l
+          })`,
+          backgroundColor: `rgb(${r}, ${g}, ${b})`,
+        }}
+      >
+        {/* {rgbToHSL([r, g, b]).l} */}
+      </div>
+    ))}
+    {/* <div style={{ display: "flex", gap: "0.5vw" }}>
       <Square />
       <Square />
     </div>
@@ -50,11 +49,15 @@ const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
     <div style={{ display: "flex", gap: "0.5vw" }}>
       <Square />
       <Square />
-    </div>
+    </div> */}
   </div>
 );
 
 type Templates = "rainbow" | "knightRider" | "randomLights";
+
+const WINDOW_POSITIONS = [
+  33.925, 39.855, 45.75, 52.9, 59.19, 65.55, 71.7, 79, 84.8, 90.75,
+];
 
 const Home: React.FC = () => {
   const router = useRouter();
@@ -170,16 +173,26 @@ const Home: React.FC = () => {
               <div>{`Frame: ${currentFrame}`}</div>
               <div
                 style={{
-                  display: "flex",
-                  gap: "5vw",
+                  position: "relative",
+                  height: "calc(100vw / 3.52)",
+                  width: "100vw",
                 }}
               >
-                {_.chunk(
-                  frames[currentFrame % frames.length] as RgbColor[],
-                  3
-                ).map((chunk, i) => (
-                  <div className="flex" key={i}>
-                    <Windows channels={chunk} />
+                <Image src="/petrelius.png" alt="Petrelius" fill />
+                {WINDOW_POSITIONS.map((pos, i) => (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "16.9vw",
+                      left: pos + "vw",
+                    }}
+                  >
+                    <Windows
+                      channels={frames[currentFrame % frames.length].slice(
+                        i * 3,
+                        (i + 1) * 3
+                      )}
+                    />
                   </div>
                 ))}
               </div>

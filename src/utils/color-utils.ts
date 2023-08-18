@@ -41,7 +41,7 @@ export function changeHue(rgb: RgbColor, degree: number) {
   return hslToRGB(hsl);
 }
 
-function rgbToHSL([r, g, b]: RgbColor) {
+export function rgbToHSL([r, g, b]: RgbColor) {
   var _r = r / 255,
     _g = g / 255,
     _b = b / 255;
