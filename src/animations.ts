@@ -9,6 +9,10 @@ import {
 // instead of a webpack name imported module
 const Utils = { changeHue, interpolateChannels, interpolateColor };
 
+// a small hack to run code from editor within the scope of this file in order to use Utils and other variables
+// defined in this file.
+export const evaluate = (code: string) => eval(code);
+
 const CHANNEL_COUNT = 30;
 
 let gradientStart: RgbColor = [0, 50, 0];
