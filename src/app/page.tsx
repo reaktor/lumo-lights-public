@@ -8,16 +8,11 @@ import { rgbToHSL } from "@/utils/color-utils";
 import Editor from "@monaco-editor/react";
 import Image from "next/image";
 
-const Square = () => (
-  <div style={{ border: "1px solid grey", height: "2vw", width: "2vw" }} />
-);
-
 const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
   <div
     style={{
       display: "flex",
       border: "1px solid grey",
-      // background: "yellow",
       height: "1.25vw",
       alignItems: "end",
     }}
@@ -28,28 +23,13 @@ const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
         style={{
           height: "0.2vw",
           width: "0.8vw",
-          // todo: calculate color brightness and set it as opacity
           boxShadow: `0px -20px 40px 20px rgba(${r}, ${g}, ${b}, ${
-            1 //rgbToHSL([r, g, b]).l
+            rgbToHSL([r, g, b]).l
           })`,
           backgroundColor: `rgb(${r}, ${g}, ${b})`,
         }}
-      >
-        {/* {rgbToHSL([r, g, b]).l} */}
-      </div>
+      ></div>
     ))}
-    {/* <div style={{ display: "flex", gap: "0.5vw" }}>
-      <Square />
-      <Square />
-    </div>
-    <div style={{ display: "flex", gap: "0.5vw" }}>
-      <Square />
-      <Square />
-    </div>
-    <div style={{ display: "flex", gap: "0.5vw" }}>
-      <Square />
-      <Square />
-    </div> */}
   </div>
 );
 
