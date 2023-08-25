@@ -65,9 +65,10 @@ export const randomLights = () => {
   ];
 
   const randomizeFrame = () =>
-    Array(CHANNEL_COUNT)
+    Array(CHANNEL_COUNT / 3) // number of windows
       .fill([0, 0, 0])
-      .map((c) => (Math.random() > 0.9 ? randomColor() : c));
+      .map((c) => (Math.random() > 0.9 ? randomColor() : c))
+      .flatMap((v) => [v, v, v]); // spread same color on all 3 channels of each window
 
   const keyframes = Array(30)
     .fill(0)
