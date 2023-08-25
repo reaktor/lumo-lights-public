@@ -69,6 +69,21 @@ const Home: React.FC = () => {
 
   const template = (params.get("template") as Templates) ?? "rainbow";
 
+  // Websocket connection to backend.
+  // const ws = React.useRef<WebSocket>();
+
+  // React.useEffect(() => {
+  //   const socket = new WebSocket("ws://localhost:8080");
+
+  //   socket.onopen = (event) => {
+  //     ws.current = socket;
+  //     ws.current.send(JSON.stringify(frames));
+  //   };
+  // }, []);
+
+  // if (ws.current)
+  //   ws.current.send(JSON.stringify(frames[currentFrame % frames.length]));
+
   React.useEffect(() => {
     changeTemplate(template);
   }, [template]);
