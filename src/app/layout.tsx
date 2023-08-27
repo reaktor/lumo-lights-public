@@ -1,21 +1,29 @@
-import "./globals.css";
-import { Roboto } from "next/font/google";
+"use client";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
-const roboto = Roboto({ weight: "400", subsets: ["latin"] });
-
-export const metadata = {
-  title: "Lumo Lights App",
-  description: "lumo lights app to control lights",
-};
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
   return (
     <html lang="en">
-      <body className={roboto.className}>{children}</body>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <body>{children}</body>
+      </ThemeProvider>
     </html>
   );
 }
