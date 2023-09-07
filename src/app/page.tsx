@@ -132,9 +132,9 @@ const Home: React.FC = () => {
             value={template}
             onChange={(e) => router.push(`?template=${e.target.value}`)}
           >
-            <MenuItem value="rainbow">Sleepy Rainbow</MenuItem>
-            <MenuItem value="knightRider">Knight Rider 2023</MenuItem>
-            <MenuItem value="randomLights">Random</MenuItem>
+            <MenuItem value="rainbow">Sleepy Rainbow by saulis</MenuItem>
+            <MenuItem value="knightRider">Knight Rider 2023 by saulis</MenuItem>
+            <MenuItem value="randomLights">Random 1 by saulis</MenuItem>
           </Select>
           <Button
             size="small"
