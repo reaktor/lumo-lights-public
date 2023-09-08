@@ -1,12 +1,21 @@
 export type RgbColor = [r: number, g: number, b: number];
 
+export type EasingFn = (n: number) => number;
+export const Easing = {
+  Linear: (n) => n,
+  EaseInSine: (n) => 1 - Math.cos((n * Math.PI) / 2),
+  EaseOutSine: (n) => Math.sin((n * Math.PI) / 2),
+  EaseInOutSine: (n) => -(Math.cos(Math.PI * n) - 1) / 2,
+} satisfies Record<string, EasingFn>;
+
 export const interpolateChannels = (
   oldChannels: RgbColor[],
   newChannels: RgbColor[],
-  steps: number
+  steps: number,
+  easingFunction = Easing.Linear
 ): RgbColor[][] => {
   const interpolated = oldChannels.map((oldColor, i) =>
-    interpolateColor(oldColor, newChannels[i], steps)
+    interpolateColor(oldColor, newChannels[i], steps, easingFunction)
   );
 
   return new Array(steps)
@@ -19,16 +28,16 @@ export const interpolateChannels = (
 export const interpolateColor = (
   [origR, origG, origB]: RgbColor,
   [newR, newG, newB]: RgbColor,
-  steps: number
-): RgbColor[] => {
-  return new Array(steps)
+  steps: number,
+  easingFunction = Easing.Linear
+): RgbColor[] =>
+  new Array(steps)
     .fill(0)
     .map((_, i) => [
-      origR + ((i + 1) * (newR - origR)) / steps,
-      origG + ((i + 1) * (newG - origG)) / steps,
-      origB + ((i + 1) * (newB - origB)) / steps,
+      easingFunction(i / steps) * (origR + ((i + 1) * (newR - origR)) / steps),
+      easingFunction(i / steps) * (origG + ((i + 1) * (newG - origG)) / steps),
+      easingFunction(i / steps) * (origB + ((i + 1) * (newB - origB)) / steps),
     ]);
-};
 
 export function changeHue(rgb: RgbColor, degree: number) {
   var hsl = rgbToHSL(rgb);
