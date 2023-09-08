@@ -34,9 +34,9 @@ export const interpolateColor = (
   new Array(steps)
     .fill(0)
     .map((_, i) => [
-      easingFunction(origR + ((i + 1) * (newR - origR)) / steps),
-      easingFunction(origG + ((i + 1) * (newG - origG)) / steps),
-      easingFunction(origB + ((i + 1) * (newB - origB)) / steps),
+      easingFunction(i / steps) * (origR + ((i + 1) * (newR - origR)) / steps),
+      easingFunction(i / steps) * (origG + ((i + 1) * (newG - origG)) / steps),
+      easingFunction(i / steps) * (origB + ((i + 1) * (newB - origB)) / steps),
     ]);
 
 export function changeHue(rgb: RgbColor, degree: number) {
