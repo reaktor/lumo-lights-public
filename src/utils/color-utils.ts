@@ -12,10 +12,11 @@ export const interpolateChannels = (
   oldChannels: RgbColor[],
   newChannels: RgbColor[],
   steps: number,
-  easingFunction = Easing.Linear
+  easingFunction = Easing.Linear,
+  interpolateColorFn = interpolateHSV
 ): RgbColor[][] => {
   const interpolated = oldChannels.map((oldColor, i) =>
-    interpolateColor(oldColor, newChannels[i], steps, easingFunction)
+    interpolateColorFn(oldColor, newChannels[i], steps, easingFunction)
   );
 
   return new Array(steps)
@@ -25,7 +26,7 @@ export const interpolateChannels = (
     );
 };
 
-export const interpolateColor = (
+export const interpolateRGB = (
   [origR, origG, origB]: RgbColor,
   [newR, newG, newB]: RgbColor,
   steps: number,
@@ -38,6 +39,49 @@ export const interpolateColor = (
       origG + (easingFunction(i / steps) * ((i + 1) * (newG - origG))) / steps,
       origB + (easingFunction(i / steps) * ((i + 1) * (newB - origB))) / steps,
     ]);
+
+export const interpolateHSV = (
+  from: RgbColor,
+  to: RgbColor,
+  steps: number,
+  easingFunction = Easing.Linear
+): RgbColor[] => {
+  const fromHsv = rgbToHsv(from);
+  const toHsv = rgbToHsv(to);
+  return new Array(steps)
+    .fill(0)
+    .map((_, i) =>
+      hsvToRgb([
+        fromHsv[0] +
+          (easingFunction(i / steps) * ((i + 1) * (toHsv[0] - fromHsv[0]))) /
+            steps,
+        fromHsv[1] +
+          (easingFunction(i / steps) * ((i + 1) * (toHsv[1] - fromHsv[1]))) /
+            steps,
+        fromHsv[2] +
+          (easingFunction(i / steps) * ((i + 1) * (toHsv[2] - fromHsv[2]))) /
+            steps,
+      ])
+    );
+};
+
+const hsvToRgb = ([h, s, v]: [h: number, s: number, v: number]): RgbColor => {
+  let f = (n: number, k = (n + h / 60) % 6) =>
+    v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+  return [f(5) * 255, f(3) * 255, f(1) * 255];
+};
+
+const rgbToHsv = ([r, g, b]: RgbColor): [h: number, s: number, v: number] => {
+  const rr = r / 255;
+  const gg = g / 255;
+  const bb = b / 255;
+  let v = Math.max(rr, gg, bb),
+    c = v - Math.min(rr, gg, bb);
+  let h =
+    c &&
+    (v == rr ? (gg - bb) / c : v == gg ? 2 + (bb - rr) / c : 4 + (rr - gg) / c);
+  return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
+};
 
 export function changeHue(rgb: RgbColor, degree: number) {
   var hsl = rgbToHSL(rgb);

@@ -73,9 +73,22 @@ Important! Editor expects you to write a function that will return the animation
 
 In order to make writing the animations a bit easier, there is a collection of utility functions (`src/utils/color-utils`) which are useful in making the animations
 
-### interpolateColor
+### interpolateHSV
 
-`interpolateColor` is one of building blocks which will take two RGB colors and calculate the colors in between.
+`interpolateHSV` is one of building blocks which will take two RGB colors and calculates the colors in between using HSV color space. This is handy when interpolating between two colors.
+
+```
+const yellow = [255, 255, 0];
+const blue = [0, 0, 255];
+const steps = 10;
+
+// returns an array of 10 RGB colors, spread between `yellow` and `blue`, having a green color in between
+const interpolated = Utils.interpolateHSV(yellow, blue, steps);
+```
+
+### interpolateRGB
+
+`interpolateRGB` is the counterpart of `interpolateHSV` but it uses RGB color space instead. This is handy when interpolating colors to black or white.
 
 ```
 const white = [255, 255, 255];
@@ -83,17 +96,19 @@ const red = [255, 0, 0];
 const steps = 10;
 
 // returns an array of 10 RGB colors, spread between `red` and `white`
-const interpolated = Utils.interpolateColor(red, white, steps);
+const interpolated = Utils.interpolateHSV(red, white, steps);
 ```
 
 ### interpolateChannels
 
 `interpolateChannels` is the equivalent of `interpolateColor` but it will take in two frames (aka channels) with 30 RGB colors each and interpolate each color separately.
 
+> Uses HSV interpolation by default, but you can override it by passing `Utils.interpolateRGB` as 5th parameter after `easing` param.
+
 ```
 const steps = 10;
 
-// returns an array of 10 frames, with colours interpolated between the colors in `frame1` and `frame2`
+// returns an array of 10 frames, with colors interpolated between the colors in `frame1` and `frame2`
 const interpolated = Utils.interpolateChannels(frame1, frame2, steps);
 ```
 

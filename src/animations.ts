@@ -2,13 +2,20 @@ import {
   changeHue,
   Easing,
   interpolateChannels,
-  interpolateColor,
+  interpolateHSV,
+  interpolateRGB,
   RgbColor,
 } from "./utils/color-utils";
 
 // manual import/export to make the transpiled JS version of functions have a neat Utils variable
 // instead of a webpack name imported module
-const Utils = { Easing, changeHue, interpolateChannels, interpolateColor };
+const Utils = {
+  Easing,
+  changeHue,
+  interpolateChannels,
+  interpolateHSV,
+  interpolateRGB,
+};
 
 // a small hack to run code from editor within the scope of this file in order to use Utils and other variables
 // defined in this file.
@@ -31,16 +38,8 @@ const animations: Record<string, Animation> = {
     author: "saulis",
     code: () => {
       const base = [
-        ...Utils.interpolateColor(
-          gradientStart,
-          gradientStop,
-          CHANNEL_COUNT / 2
-        ),
-        ...Utils.interpolateColor(
-          gradientStop,
-          gradientStart,
-          CHANNEL_COUNT / 2
-        ),
+        ...Utils.interpolateHSV(gradientStart, gradientStop, CHANNEL_COUNT / 2),
+        ...Utils.interpolateHSV(gradientStop, gradientStart, CHANNEL_COUNT / 2),
       ];
 
       const keyframes = Array(CHANNEL_COUNT)
@@ -66,7 +65,9 @@ const animations: Record<string, Animation> = {
         .fill([0, 0, 0])
         .map((c, i) => (i === 0 ? [255, 0, 0] : c));
 
-      const fade = Utils.interpolateColor([255, 0, 0], [0, 0, 0], 12);
+      // Using RGB interpolate here to avoid interpolating from red to grey before black
+      // HSV can be used also if you interpolate between [255, 0, 0] and [1, 0, 0]
+      const fade = Utils.interpolateRGB([255, 0, 0], [0, 0, 0], 12);
 
       const frames = Array(CHANNEL_COUNT)
         .fill(0)
