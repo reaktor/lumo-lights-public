@@ -1,5 +1,6 @@
 import {
   changeHue,
+  Easing,
   interpolateChannels,
   interpolateColor,
   RgbColor,
@@ -7,7 +8,7 @@ import {
 
 // manual import/export to make the transpiled JS version of functions have a neat Utils variable
 // instead of a webpack name imported module
-const Utils = { changeHue, interpolateChannels, interpolateColor };
+const Utils = { Easing, changeHue, interpolateChannels, interpolateColor };
 
 // a small hack to run code from editor within the scope of this file in order to use Utils and other variables
 // defined in this file.
@@ -77,6 +78,23 @@ const animations: Record<string, Animation> = {
         i < frames.length - 1
           ? Utils.interpolateChannels(frames[i], frames[i + 1], 2)
           : [frames[i]]
+      );
+
+      return [...interpolated, ...interpolated.reverse()];
+    },
+  },
+  lighthouse: {
+    label: "Lighthouse",
+    author: "saulis",
+    code: () => {
+      const black = Array(CHANNEL_COUNT).fill([0, 0, 0]);
+      const white = Array(CHANNEL_COUNT).fill([255, 255, 255]);
+
+      const interpolated = Utils.interpolateChannels(
+        black,
+        white,
+        100,
+        Utils.Easing.EaseInSine
       );
 
       return [...interpolated, ...interpolated.reverse()];
