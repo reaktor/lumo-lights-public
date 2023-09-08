@@ -97,6 +97,21 @@ const steps = 10;
 const interpolated = Utils.interpolateChannels(frame1, frame2, steps);
 ```
 
+### Easing
+
+`Utils.Easing` contain four different easing functions: `Linear`, `EaseInSine`, `EaseOutSine`, `EaseInOutSine` which can be used as an optional argument when calling either `interpolateColor` or `interpolateChannels`. They use `Utils.Easing.Linear` by default.
+
+```
+Utils.interpolateChannels(frame1, frame2, steps, Utils.Easing.EaseInSine);
+```
+
+You can also roll out a custom easing function by providing a function which takes in a number between `0.0` and `1.0` and returns a number from between `0.0` and `1.0`.
+
+```
+const reverseEasing = n => 1 - n;
+Utils.interpolateChannels(frame1, frame2, steps, reverseEasing);
+```
+
 ### changeHue
 
 `changeHue` can be used to change the Hue of a color. Takes in a color to change and degrees (0-360) of change.
