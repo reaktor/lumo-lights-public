@@ -14,7 +14,7 @@ We have a separate backend software (currently outside of this repository) which
 
 ## Animations
 
-An animation is an array **frames**, and it doesn't currently have a max limit for the frame count. We run the animations roughly at 25 frames per second, so for a 10 second animation you need 250 frames.
+An animation is an array of **frames**, and it doesn't currently have a max limit for the frame count. We run the animations roughly at 25 frames per second, so for a 10 second animation you need 250 frames.
 
 A **frame** is an array of 30 RGB colors (10 windows, each with 3 segments). Each RGB color is presented as an array with 3 numbers with values from 0 to 255. First number determines the amount of Red, 2nd Green, and 3rd is for Blue.
 
@@ -114,6 +114,17 @@ Utils.changeHue([255, 0, 0], 180);
 
 ```
 Utils.rgbToHSL([255, 0, 0]);
+```
+
+### hslToRGB
+
+`hslToRGB` can be used to calculate RGB value back from HSL.
+
+```
+// h is Hue, values 0-360 (degrees)
+// s is Saturation, values 0.0 to 1.0
+// l is Luminance, values 0.0 to 1.0
+Utils.hslToRGB({ h: 180, s: 1, l: 1 });
 ```
 
 > See https://en.wikipedia.org/wiki/HSL_and_HSV for more details.

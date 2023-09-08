@@ -73,7 +73,7 @@ export function rgbToHSL([r, g, b]: RgbColor) {
     l: l,
   };
 }
-function hslToRGB(hsl: { h: number; s: number; l: number }): RgbColor {
+export function hslToRGB(hsl: { h: number; s: number; l: number }): RgbColor {
   var h = hsl.h,
     s = hsl.s,
     l = hsl.l,
