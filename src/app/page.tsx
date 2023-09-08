@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   Dialog,
+  Link,
   MenuItem,
   Select,
   Slider,
@@ -162,6 +163,12 @@ const Home: React.FC = () => {
               Play
             </Button>
           )}
+          <Link
+            target="_blank"
+            href="https://github.com/reaktor/lumo-lights-public#readme"
+          >
+            Instructions
+          </Link>
         </Box>
         <Dialog
           fullScreen
