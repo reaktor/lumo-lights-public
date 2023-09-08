@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as _ from "lodash";
-import { rainbow, knightRider, randomLights, evaluate } from "@/animations";
+import animations, { evaluate } from "@/animations";
 import type { RgbColor } from "@/utils/color-utils";
 import { rgbToHSL } from "@/utils/color-utils";
 import Editor from "@monaco-editor/react";
@@ -44,8 +44,6 @@ const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
   </div>
 );
 
-type Templates = "rainbow" | "knightRider" | "randomLights";
-
 const WINDOW_POSITIONS = [
   33.925, 39.855, 45.75, 52.9, 59.19, 65.55, 71.7, 79, 84.8, 90.75,
 ];
@@ -59,7 +57,9 @@ const Home: React.FC = () => {
   const [editorValue, setEditorValue] = React.useState("");
   const [showEditor, setShowEditor] = React.useState(false);
 
-  const template = (params.get("template") as Templates) ?? "rainbow";
+  const animation =
+    (params.get("animation") as keyof typeof animations) ??
+    Object.keys(animations)[0];
 
   // Websocket connection to backend.
   // const ws = React.useRef<WebSocket>();
@@ -77,8 +77,8 @@ const Home: React.FC = () => {
   //   ws.current.send(JSON.stringify(frames[currentFrame % frames.length]));
 
   React.useEffect(() => {
-    changeTemplate(template);
-  }, [template]);
+    changeAnimation(animation);
+  }, [animation]);
 
   React.useEffect(() => {
     const interval = setInterval(
@@ -99,19 +99,9 @@ const Home: React.FC = () => {
     [setFrames, setEditorValue, setCurrentFrame]
   );
 
-  const changeTemplate = React.useCallback(
-    (template: Templates) => {
-      switch (template) {
-        case "rainbow":
-          refresh(rainbow);
-          break;
-        case "knightRider":
-          refresh(knightRider);
-          break;
-        case "randomLights":
-          refresh(randomLights);
-          break;
-      }
+  const changeAnimation = React.useCallback(
+    (animation: keyof typeof animations) => {
+      refresh(animations[animation].code);
     },
     [refresh]
   );
@@ -129,12 +119,14 @@ const Home: React.FC = () => {
           <Typography noWrap>Select animation:</Typography>
           <Select
             size="small"
-            value={template}
-            onChange={(e) => router.push(`?template=${e.target.value}`)}
+            value={animation}
+            onChange={(e) => router.push(`?animation=${e.target.value}`)}
           >
-            <MenuItem value="rainbow">Sleepy Rainbow by saulis</MenuItem>
-            <MenuItem value="knightRider">Knight Rider 2023 by saulis</MenuItem>
-            <MenuItem value="randomLights">Random 1 by saulis</MenuItem>
+            {Object.entries(animations).map(([key, { label, author }]) => (
+              <MenuItem key={key} value={key}>
+                {label} by {author}
+              </MenuItem>
+            ))}
           </Select>
           <Button
             size="small"
@@ -183,7 +175,7 @@ const Home: React.FC = () => {
           <AppBar sx={{ position: "relative" }}>
             <Toolbar>
               <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                {template}
+                {animation}
               </Typography>
               <Button
                 autoFocus
