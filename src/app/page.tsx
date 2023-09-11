@@ -2,11 +2,11 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as _ from "lodash";
-import animations, { evaluate } from "@/animations";
+import defaultAnimations, { evaluate } from "@/animations";
 import type { RgbColor } from "@/utils/color-utils";
 import { rgbToHSL } from "@/utils/color-utils";
 import Editor from "@monaco-editor/react";
-import Image from "next/image";
+import NextImage from "next/image";
 import {
   AppBar,
   Box,
@@ -19,6 +19,9 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+
+import { transformImageToFrames } from "@/utils/image-utils";
+import UploadButton from "./UploadButton";
 
 const Windows: React.FC<{ channels: RgbColor[] }> = ({ channels }) => (
   <div
@@ -57,6 +60,7 @@ const Home: React.FC = () => {
   const [frames, setFrames] = React.useState<RgbColor[][]>([]);
   const [editorValue, setEditorValue] = React.useState("");
   const [showEditor, setShowEditor] = React.useState(false);
+  const [animations, setAnimations] = React.useState(defaultAnimations);
 
   const animation =
     (params.get("animation") as keyof typeof animations) ??
@@ -78,8 +82,14 @@ const Home: React.FC = () => {
   //   ws.current.send(JSON.stringify(frames[currentFrame % frames.length]));
 
   React.useEffect(() => {
-    changeAnimation(animation);
-  }, [animation]);
+    // uploaded animatiosn are missing after a page reload
+    if (!animations[animation]) {
+      router.push("/");
+      return;
+    }
+
+    refresh(animations[animation].code);
+  }, [animation, animations]);
 
   React.useEffect(() => {
     const interval = setInterval(
@@ -100,69 +110,84 @@ const Home: React.FC = () => {
     [setFrames, setEditorValue, setCurrentFrame]
   );
 
-  const changeAnimation = React.useCallback(
-    (animation: keyof typeof animations) => {
-      refresh(animations[animation].code);
-    },
-    [refresh]
-  );
-
   return (
     <main>
       <Box display="flex" flexDirection="column" gap={1.5}>
         <Box
           display="flex"
-          gap={1.5}
-          p={2}
+          gap={5}
           justifyItems={"center"}
           alignItems={"center"}
         >
-          <Typography noWrap>Select animation:</Typography>
-          <Select
-            size="small"
-            value={animation}
-            onChange={(e) => router.push(`?animation=${e.target.value}`)}
+          <Box
+            display="flex"
+            gap={1.5}
+            p={2}
+            justifyItems={"center"}
+            alignItems={"center"}
           >
-            {Object.entries(animations).map(([key, { label, author }]) => (
-              <MenuItem key={key} value={key}>
-                {label} by {author}
-              </MenuItem>
-            ))}
-          </Select>
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => setShowEditor(true)}
-          >
-            Edit
-          </Button>
-          <Button
-            size="small"
-            variant="contained"
-            color="info"
-            onClick={() => refresh(evaluate(editorValue))}
-          >
-            Restart
-          </Button>
-          {running ? (
+            <Typography noWrap>Select animation:</Typography>
+            <Select
+              size="small"
+              value={animation}
+              onChange={(e) => router.push(`?animation=${e.target.value}`)}
+            >
+              {Object.entries(animations).map(([key, { label, author }]) => (
+                <MenuItem key={key} value={key}>
+                  {label} by {author}
+                </MenuItem>
+              ))}
+            </Select>
             <Button
               size="small"
               variant="contained"
-              color="error"
-              onClick={() => setRunning(false)}
+              onClick={() => setShowEditor(true)}
             >
-              Pause
+              Edit
             </Button>
-          ) : (
             <Button
               size="small"
               variant="contained"
-              color="success"
-              onClick={() => setRunning(true)}
+              color="info"
+              onClick={() => refresh(evaluate(editorValue))}
             >
-              Play
+              Restart
             </Button>
-          )}
+            {running ? (
+              <Button
+                size="small"
+                variant="contained"
+                color="error"
+                onClick={() => setRunning(false)}
+              >
+                Pause
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                variant="contained"
+                color="success"
+                onClick={() => setRunning(true)}
+              >
+                Play
+              </Button>
+            )}
+          </Box>
+          <UploadButton
+            onUploaded={async (dataUrl, filename) => {
+              const frames = await transformImageToFrames(dataUrl);
+
+              setAnimations((animations) => ({
+                ...animations,
+                [filename]: {
+                  label: filename,
+                  author: "anonymous animator",
+                  code: () => frames,
+                },
+              }));
+              router.push(`?animation=${filename}`);
+            }}
+          />
           <Link
             target="_blank"
             href="https://github.com/reaktor/lumo-lights-public#readme"
@@ -241,7 +266,7 @@ const Home: React.FC = () => {
                 width: "100vw",
               }}
             >
-              <Image src="/petrelius.png" alt="Petrelius" fill />
+              <NextImage src="/petrelius.png" alt="Petrelius" fill />
               {WINDOW_POSITIONS.map((pos, i) => (
                 <div
                   style={{

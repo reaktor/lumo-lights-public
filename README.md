@@ -159,7 +159,7 @@ Utils.hslToRGB({ h: 180, s: 1, l: 1 });
 
 > See https://en.wikipedia.org/wiki/HSL_and_HSV for more details.
 
-### Creating a simple animation
+### Writing a simple animation
 
 Basically there is no restrictions how you create the array of frames. You can even use an external app for that and just paste the frames in the editor if you want.
 
@@ -187,6 +187,12 @@ If you want to code an animation though, one way to get started is to create a s
 }
 
 ```
+
+## Creating animations from an image
+
+Alternatively to _writing_ animations, you can also create an image and upload it to the web tool. The image needs to be 30 pixels wide and X pixels tall, X being the number of frames in your animation. Each row in the image represents a frame, and each pixel in a row represents a color channel in the windows.
+
+See example here: [gradient.png](gradient.png)
 
 ## Running animations in the web tool
 
