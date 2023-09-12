@@ -33,6 +33,32 @@ type Animation = {
 };
 
 const animations: Record<string, Animation> = {
+  gaming_rgb: {
+    label: "Gaming RGB",
+    author: "vilkku",
+    code: () => {
+      const colorTransitionFrameCount = 120;
+
+      const red: RgbColor = [255, 0, 0];
+      const green: RgbColor = [0, 255, 0];
+      const blue: RgbColor = [0, 0, 255];
+
+      const rToG = Utils.interpolateHSV(red, green, colorTransitionFrameCount);
+      const gToB = Utils.interpolateHSV(green, blue, colorTransitionFrameCount);
+      const bToR = Utils.interpolateHSV(blue, red, colorTransitionFrameCount);
+
+      const colors = rToG.concat(gToB).concat(bToR);
+      const step = colors.length / CHANNEL_COUNT;
+
+      return Array(colors.length)
+        .fill(0)
+        .map((_, row) =>
+          Array(CHANNEL_COUNT)
+            .fill(0)
+            .map((_, column) => colors[(column * step + row) % colors.length])
+        );
+    },
+  },
   sleepy_rgb: {
     label: "Sleepy RGB",
     author: "saulis",
